@@ -1,16 +1,17 @@
 package com.innowise.userservice.service.api;
 
+import com.innowise.userservice.dto.request.PaymentCardCreateDto;
+import com.innowise.userservice.dto.request.PaymentCardUpdateDto;
+import com.innowise.userservice.dto.response.PaymentCardResponseDto;
 import com.innowise.userservice.entity.PaymentCard;
 
 public interface PaymentCardCommandService {
 
-    PaymentCard create(PaymentCard paymentCard);
+    PaymentCardResponseDto create(PaymentCardCreateDto paymentCardCreateDto);
 
-    PaymentCard update(long id, PaymentCard paymentCard);
+    PaymentCardResponseDto update(long id, PaymentCardUpdateDto paymentCardUpdateDto);
 
     void delete(long id);
 
-    PaymentCard activate(long id);
-
-    PaymentCard deactivate(long id);
+    PaymentCardResponseDto changeStatus(long id, boolean status);
 }
