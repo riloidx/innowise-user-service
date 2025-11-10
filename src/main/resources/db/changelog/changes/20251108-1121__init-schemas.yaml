@@ -116,17 +116,6 @@ databaseChangeLog:
             onDelete: CASCADE
 
   - changeSet:
-      id: 20251108-1144__add-index-users-email
-      author: matvey
-      changes:
-        - createIndex:
-            indexName: idx_users_email
-            tableName: users
-            columns:
-              - column:
-                  name: email
-
-  - changeSet:
       id: 20251108-1152__add-index-payment-cards-user
       author: matvey
       changes:
