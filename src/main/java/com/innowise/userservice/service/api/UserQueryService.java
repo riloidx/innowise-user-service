@@ -4,13 +4,20 @@ import com.innowise.userservice.dto.response.UserResponseDto;
 import com.innowise.userservice.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+
+import java.time.LocalDate;
 
 public interface UserQueryService {
 
     User findById(long id);
 
-    User findByEmail(String email);
+    UserResponseDto findDtoById(long id);
 
-    Page<UserResponseDto> findAll(Specification<User> spec, Pageable pageable);
+    UserResponseDto findDtoByEmail(String email);
+
+    Page<UserResponseDto> findAll(String name,
+                                  String surname,
+                                  LocalDate birthDate,
+                                  Boolean active,
+                                  Pageable pageable);
 }

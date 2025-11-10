@@ -3,7 +3,6 @@ package com.innowise.userservice.service.api;
 import com.innowise.userservice.dto.request.PaymentCardCreateDto;
 import com.innowise.userservice.dto.request.PaymentCardUpdateDto;
 import com.innowise.userservice.dto.response.PaymentCardResponseDto;
-import com.innowise.userservice.entity.PaymentCard;
 
 public interface PaymentCardCommandService {
 
