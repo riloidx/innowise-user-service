@@ -16,6 +16,9 @@ import com.innowise.userservice.service.api.PaymentCardDataAccessService;
 import com.innowise.userservice.service.api.UserDataAccessService;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,12 @@ public class PaymentCardCommandServiceImpl implements PaymentCardCommandService 
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#result.id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "#paymentCardCreateDto.userId")
+            })
     public PaymentCardResponseDto create(PaymentCardCreateDto paymentCardCreateDto) {
         PaymentCard paymentCard = getValidatedCardForCreation(paymentCardCreateDto);
 
@@ -42,6 +51,12 @@ public class PaymentCardCommandServiceImpl implements PaymentCardCommandService 
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(key = "#id", value = "card")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "@paymentCardDataAccessServiceImpl.findById(#id).user.id")
+            })
     public PaymentCardResponseDto update(long id, PaymentCardUpdateDto paymentCardUpdateDto) {
         PaymentCard existingCard = getValidatedCardForUpdate(id, paymentCardUpdateDto);
 
@@ -53,12 +68,24 @@ public class PaymentCardCommandServiceImpl implements PaymentCardCommandService 
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "card", key = "#id", beforeInvocation = true),
+            @CacheEvict(value = "cards",
+                    key = "@paymentCardDataAccessServiceImpl.findById(#id).user.id",
+                    beforeInvocation = true)
+    })
     public void delete(long id) {
         paymentCardRepo.deleteById(id);
     }
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "@paymentCardDataAccessServiceImpl.findById(#id).user.id")
+            })
     public PaymentCardResponseDto changeStatus(long id, boolean active) {
         PaymentCard card = getValidatedCardForChangingStatus(id, active);
 

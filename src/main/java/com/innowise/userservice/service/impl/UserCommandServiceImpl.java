@@ -12,6 +12,9 @@ import com.innowise.userservice.service.api.UserCommandService;
 import com.innowise.userservice.service.api.UserDataAccessService;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final ValidationUtil validationUtil;
 
     @Override
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto create(UserCreateDto userCreateDto) {
         checkEmailNotTaken(userCreateDto.getEmail());
         User user = mapper.toEntity(userCreateDto);
@@ -36,6 +40,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     @Transactional
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto update(long id, UserUpdateDto userUpdateDto) {
         User curUser = getValidatedUserForUpdate(id, userUpdateDto);
         mapper.updateEntityFromDto(userUpdateDto, curUser);
@@ -45,6 +50,11 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "user", key = "#id", beforeInvocation = true),
+                    @CacheEvict(value = "cards", key = "#id")
+            })
     public void delete(long id) {
         userDataAccessService.findById(id);
 
@@ -53,6 +63,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     @Transactional
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto changeStatus(long id, boolean status) {
         User curUser = getValidatedUserForChangingStatus(id, status);
 

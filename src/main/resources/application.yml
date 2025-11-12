@@ -11,3 +11,9 @@ spring:
 user:
   card:
     max-limit: 5
+
+cache:
+  ttl:
+    user: 10m
+    card: 10m
+    cards: 5m

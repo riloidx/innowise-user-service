@@ -8,6 +8,7 @@ import com.innowise.userservice.service.api.PaymentCardDataAccessService;
 import com.innowise.userservice.service.api.PaymentCardQueryService;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,6 +45,7 @@ public class PaymentCardQueryServiceImpl implements PaymentCardQueryService {
     }
 
     @Override
+    @Cacheable(value = "cards", key = "#userId")
     public List<PaymentCardResponseDto> findAllByUserId(long userId) {
         List<PaymentCard> paymentCards = paymentCardRepo.findAllByUserId(userId);
 

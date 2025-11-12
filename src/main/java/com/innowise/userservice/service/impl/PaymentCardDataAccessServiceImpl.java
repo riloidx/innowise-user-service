@@ -5,6 +5,7 @@ import com.innowise.userservice.exception.PaymentCardNotFoundException;
 import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.service.api.PaymentCardDataAccessService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,7 @@ public class PaymentCardDataAccessServiceImpl implements PaymentCardDataAccessSe
     private final PaymentCardRepository paymentCardRepo;
 
     @Override
+    @Cacheable(value = "card", key = "#id")
     public PaymentCard findById(long id) {
         return paymentCardRepo.findById(id).
                 orElseThrow(() -> new PaymentCardNotFoundException("id", String.valueOf(id)));
