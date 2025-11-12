@@ -1,16 +1,17 @@
 package com.innowise.userservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
-@Table(name = "payment_cards")
 public class PaymentCard extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
