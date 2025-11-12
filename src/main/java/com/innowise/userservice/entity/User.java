@@ -2,7 +2,6 @@ package com.innowise.userservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,9 +32,9 @@ public class User extends Auditable {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @ColumnDefault("true")
     @Column(name = "active")
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentCard> paymentCards = new ArrayList<>();

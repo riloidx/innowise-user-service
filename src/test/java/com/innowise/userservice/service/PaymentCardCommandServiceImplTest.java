@@ -109,7 +109,7 @@ class PaymentCardCommandServiceImplTest {
         createDto.setNumber("12341234");
 
         List<PaymentCard> cards = new ArrayList<>();
-        for (int i = 0; i < 5; i++) cards.add(PaymentCard.builder().id((long)i).build()); // уже 5 карт
+        for (int i = 0; i < 5; i++) cards.add(PaymentCard.builder().id((long)i).build());
 
         User user = User.builder().id(1L).paymentCards(cards).build();
 
