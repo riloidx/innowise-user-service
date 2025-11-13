@@ -26,9 +26,8 @@ public class PaymentCard extends Auditable {
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
 
-    @ColumnDefault("true")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
