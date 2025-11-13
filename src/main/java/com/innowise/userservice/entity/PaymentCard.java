@@ -1,15 +1,16 @@
 package com.innowise.userservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "payment_cards")
 public class PaymentCard extends Auditable {
     @Id
@@ -27,6 +28,7 @@ public class PaymentCard extends Auditable {
     private LocalDate expirationDate;
 
     @Column(name = "active")
+    @Builder.Default
     private Boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

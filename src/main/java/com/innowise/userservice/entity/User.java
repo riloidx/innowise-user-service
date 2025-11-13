@@ -1,8 +1,7 @@
 package com.innowise.userservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
@@ -12,6 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User extends Auditable {
     @Id
@@ -32,6 +34,7 @@ public class User extends Auditable {
     private String email;
 
     @Column(name = "active")
+    @Builder.Default
     private Boolean active = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
