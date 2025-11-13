@@ -15,6 +15,10 @@ import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,6 +40,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#result.id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "#paymentCardCreateDto.userId")
+            })
     public PaymentCardResponseDto create(PaymentCardCreateDto paymentCardCreateDto) {
         PaymentCard paymentCard = getValidatedCardForCreation(paymentCardCreateDto);
 
@@ -46,6 +56,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(key = "#id", value = "card")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "@paymentCardDataAccessServiceImpl.findById(#id).user.id")
+            })
     public PaymentCardResponseDto update(long id, PaymentCardUpdateDto paymentCardUpdateDto) {
         PaymentCard existingCard = getValidatedCardForUpdate(id, paymentCardUpdateDto);
 
@@ -57,12 +73,24 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "card", key = "#id", beforeInvocation = true),
+            @CacheEvict(value = "cards",
+                    key = "@findById(#id).user.id",
+                    beforeInvocation = true)
+    })
     public void delete(long id) {
         paymentCardRepo.deleteById(id);
     }
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "@findById(#id).user.id")
+            })
     public PaymentCardResponseDto changeStatus(long id, boolean active) {
         PaymentCard card = getValidatedCardForChangingStatus(id, active);
 
@@ -71,6 +99,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Cacheable(value = "card", key = "#id")
     public PaymentCard findById(long id) {
         return paymentCardRepo.findById(id).
                 orElseThrow(() -> new PaymentCardNotFoundException("id", String.valueOf(id)));
@@ -97,6 +126,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Cacheable(value = "cards", key = "#userId")
     public List<PaymentCardResponseDto> findAllByUserId(long userId) {
         List<PaymentCard> paymentCards = paymentCardRepo.findAllByUserId(userId);
 

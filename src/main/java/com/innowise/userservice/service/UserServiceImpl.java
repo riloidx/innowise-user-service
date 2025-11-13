@@ -12,6 +12,10 @@ import com.innowise.userservice.repository.UserRepository;
 import com.innowise.userservice.specification.UserSpecification;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto create(UserCreateDto userCreateDto) {
         checkEmailNotTaken(userCreateDto.getEmail());
         User user = mapper.toEntity(userCreateDto);
@@ -41,6 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto update(long id, UserUpdateDto userUpdateDto) {
         User curUser = getValidatedUserForUpdate(id, userUpdateDto);
         mapper.updateEntityFromDto(userUpdateDto, curUser);
@@ -50,6 +56,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "user", key = "#id", beforeInvocation = true),
+                    @CacheEvict(value = "cards", key = "#id")
+            })
     public void delete(long id) {
         findById(id);
 
@@ -58,6 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value = "user", key = "#result.id")
     public UserResponseDto changeStatus(long id, boolean status) {
         User curUser = getValidatedUserForChangingStatus(id, status);
 
@@ -81,6 +93,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "user", key = "#id")
     public UserResponseDto findDtoById(long id) {
         return mapper.toDto(findById(id));
     }
