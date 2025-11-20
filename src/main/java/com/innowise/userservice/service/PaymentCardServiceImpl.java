@@ -15,10 +15,6 @@ import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -103,7 +99,6 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
-    @Cacheable(value = "cards", key = "#userId")
     public List<PaymentCardResponseDto> findAllByUserId(long userId) {
         List<PaymentCard> paymentCards = paymentCardRepo.findAllByUserId(userId);
 
@@ -160,7 +155,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         return card;
     }
 
-    public PaymentCard getValidatedCardForUpdate(long id, PaymentCardUpdateDto dto) {
+    private PaymentCard getValidatedCardForUpdate(long id, PaymentCardUpdateDto dto) {
         validationUtil.validateMatchingIds(id, dto.getId());
 
         PaymentCard existingCard = findById(id);
