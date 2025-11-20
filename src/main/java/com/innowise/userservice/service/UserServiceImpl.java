@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Caching(
             evict = {
-                    @CacheEvict(value = "user", key = "#id", beforeInvocation = true),
+                    @CacheEvict(value = "user", key = "#id"),
                     @CacheEvict(value = "cards", key = "#id")
             })
     public void delete(long id) {
@@ -86,12 +86,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepo.findByEmail(email).
-                orElseThrow(() -> new UserNotFoundException("email", email));
-    }
-
-    @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "user", key = "#id")
     public UserResponseDto findDtoById(long id) {
@@ -99,8 +93,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "user", key = "#email")
     public UserResponseDto findDtoByEmail(String email) {
-        return mapper.toDto(findByEmail(email));
+        User user = userRepo.findByEmail(email).
+                orElseThrow(() -> new UserNotFoundException("email", email));
+        return mapper.toDto(user);
     }
 
     @Override

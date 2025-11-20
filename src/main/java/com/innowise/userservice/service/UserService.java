@@ -25,8 +25,6 @@ public interface UserService {
 
     User findById(long id);
 
-    User findByEmail(String email);
-
     // DTO queries
 
     UserResponseDto findDtoById(long id);

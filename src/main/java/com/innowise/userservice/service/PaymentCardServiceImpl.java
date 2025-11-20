@@ -57,7 +57,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     @Transactional
     @Caching(put = {
-            @CachePut(key = "#id", value = "card")
+            @CachePut(value = "card", key = "#id")
     },
             evict = {
                     @CacheEvict(value = "cards", key = "#paymentCardUpdateDto.id")
@@ -74,10 +74,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "card", key = "#id", beforeInvocation = true),
+            @CacheEvict(value = "card", key = "#id"),
             @CacheEvict(value = "cards",
-                    key = "@paymentCardServiceImpl.findById(#id).user.id",
-                    beforeInvocation = true)
+                    key = "@paymentCardServiceImpl.findById(#id).user.id")
     })
     public void delete(long id) {
         findById(id);
@@ -108,6 +107,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "card", key = "#id")
     public PaymentCardResponseDto findDtoById(long id) {
         return mapper.toDto(findById(id));
     }
