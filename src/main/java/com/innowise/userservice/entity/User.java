@@ -31,9 +31,8 @@ public class User extends Auditable {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @ColumnDefault("true")
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentCard> paymentCards = new ArrayList<>();

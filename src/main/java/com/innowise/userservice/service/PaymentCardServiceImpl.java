@@ -6,11 +6,19 @@ import com.innowise.userservice.dto.request.PaymentCardUpdateDto;
 import com.innowise.userservice.dto.response.PaymentCardResponseDto;
 import com.innowise.userservice.entity.PaymentCard;
 import com.innowise.userservice.entity.User;
+import com.innowise.userservice.exception.BadRequestException;
+import com.innowise.userservice.exception.PaymentCardAlreadyExistsException;
+import com.innowise.userservice.exception.PaymentCardLimitExceededException;
+import com.innowise.userservice.exception.PaymentCardNotFoundException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
 import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import com.innowise.userservice.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +40,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#result.id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "#paymentCardCreateDto.userId")
+            })
     public PaymentCardResponseDto create(PaymentCardCreateDto paymentCardCreateDto) {
         PaymentCard paymentCard = getValidatedCardForCreation(paymentCardCreateDto);
 
@@ -42,6 +56,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "#paymentCardUpdateDto.id")
+            })
     public PaymentCardResponseDto update(long id, PaymentCardUpdateDto paymentCardUpdateDto) {
         PaymentCard existingCard = getValidatedCardForUpdate(id, paymentCardUpdateDto);
 
@@ -53,12 +73,25 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "card", key = "#id"),
+            @CacheEvict(value = "cards",
+                    key = "@paymentCardServiceImpl.findById(#id).user.id")
+    })
     public void delete(long id) {
+        findById(id);
+
         paymentCardRepo.deleteById(id);
     }
 
     @Override
     @Transactional
+    @Caching(put = {
+            @CachePut(value = "card", key = "#id")
+    },
+            evict = {
+                    @CacheEvict(value = "cards", key = "@paymentCardServiceImpl.findById(#id).user.id")
+            })
     public PaymentCardResponseDto changeStatus(long id, boolean active) {
         PaymentCard card = getValidatedCardForChangingStatus(id, active);
 
@@ -74,6 +107,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "card", key = "#id")
     public PaymentCardResponseDto findDtoById(long id) {
         return mapper.toDto(findById(id));
     }
@@ -93,6 +127,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Cacheable(value = "cards", key = "#userId")
     public List<PaymentCardResponseDto> findAllByUserId(long userId) {
         List<PaymentCard> paymentCards = paymentCardRepo.findAllByUserId(userId);
 
@@ -149,7 +184,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         return card;
     }
 
-    private PaymentCard getValidatedCardForUpdate(long id, PaymentCardUpdateDto dto) {
+    public PaymentCard getValidatedCardForUpdate(long id, PaymentCardUpdateDto dto) {
         validationUtil.validateMatchingIds(id, dto.getId());
 
         PaymentCard existingCard = findById(id);
