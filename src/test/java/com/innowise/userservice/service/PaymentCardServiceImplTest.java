@@ -64,7 +64,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void create_shouldSaveAndReturnDto_whenValid() {
+    void createShouldSaveAndReturnDtoWhenValid() {
         PaymentCardCreateDto createDto = new PaymentCardCreateDto();
         createDto.setUserId(1L);
         createDto.setNumber("12341234");
@@ -95,7 +95,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void create_shouldThrow_whenNumberAlreadyExists() {
+    void createShouldThrowWhenNumberAlreadyExists() {
         PaymentCardCreateDto createDto = new PaymentCardCreateDto();
         createDto.setNumber("12341234");
 
@@ -108,7 +108,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void create_shouldThrow_whenUserExceedsCardLimit() {
+    void createShouldThrowWhenUserExceedsCardLimit() {
         PaymentCardCreateDto createDto = new PaymentCardCreateDto();
         createDto.setUserId(1L);
         createDto.setNumber("12341234");
@@ -125,7 +125,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void update_shouldSaveAndReturnDto_whenValid() {
+    void updateShouldSaveAndReturnDtoWhenValid() {
         long id = 1L;
         PaymentCardUpdateDto updateDto = new PaymentCardUpdateDto();
         updateDto.setId(id);
@@ -151,7 +151,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void changeStatus_shouldSaveAndReturnDto_whenStatusChanges() {
+    void changeStatusShouldSaveAndReturnDtoWhenStatusChanges() {
         long id = 1L;
         PaymentCard card = PaymentCard.builder().id(id).active(false).build();
         PaymentCard savedCard = PaymentCard.builder().id(id).active(true).build();
@@ -170,7 +170,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void changeStatus_shouldThrow_whenStatusAlreadySet() {
+    void changeStatusShouldThrowWhenStatusAlreadySet() {
         long id = 1L;
         PaymentCard card = PaymentCard.builder().id(id).active(true).build();
 
@@ -182,7 +182,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void findById_returnCard_whenCardExists() {
+    void findByIdReturnCardWhenCardExists() {
         long id = 1L;
 
         PaymentCard paymentCard = PaymentCard.builder().
@@ -199,7 +199,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void findById_ThrowException_whenCardDoesNotExist() {
+    void findByIdThrowExceptionWhenCardDoesNotExist() {
         long id = 1L;
         when(paymentCardRepo.findById(id)).thenReturn(Optional.empty());
 
@@ -208,7 +208,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void findDtoById_shouldReturnDto_whenCardExists() {
+    void findDtoByIdShouldReturnDtoWhenCardExists() {
         long id = 1L;
         PaymentCard card = PaymentCard.builder().id(id).build();
         PaymentCardResponseDto dto = PaymentCardResponseDto.builder().id(id).build();
@@ -224,7 +224,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void findAll_shouldReturnPage_whenSpecProvided() {
+    void findAllShouldReturnPageWhenSpecProvided() {
         Boolean active = true;
         LocalDate expiresAfter = LocalDate.of(2025, 1, 1);
         LocalDate expiresBefore = LocalDate.of(2025, 12, 31);
@@ -244,7 +244,7 @@ class PaymentCardServiceImplTest {
     }
 
     @Test
-    void findAllByUserId_shouldReturnList_whenCardsExist() {
+    void findAllByUserIdShouldReturnListWhenCardsExist() {
         long userId = 1L;
         PaymentCard card = PaymentCard.builder().id(1L).build();
         List<PaymentCard> cards = List.of(card);

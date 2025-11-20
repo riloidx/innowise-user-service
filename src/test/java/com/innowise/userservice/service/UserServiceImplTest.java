@@ -48,7 +48,7 @@ class UserServiceImplTest {
 
 
     @Test
-    void create_shouldSaveAndReturnDto_whenEmailNotTaken() {
+    void createShouldSaveAndReturnDtoWhenEmailNotTaken() {
         UserCreateDto createDto = new UserCreateDto();
         createDto.setEmail("test@test.com");
         createDto.setName("Test");
@@ -88,7 +88,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void create_shouldThrow_whenEmailTaken() {
+    void createShouldThrowWhenEmailTaken() {
         UserCreateDto createDto = new UserCreateDto();
         String email = "test@test.com";
         createDto.setEmail(email);
@@ -102,7 +102,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update_shouldSaveAndReturnDto_whenValid() {
+    void updateShouldSaveAndReturnDtoWhenValid() {
         long userId = 1L;
 
         UserUpdateDto updateDto = new UserUpdateDto();
@@ -141,7 +141,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void delete_shouldCallRepo_whenUserExists() {
+    void deleteShouldCallRepoWhenUserExists() {
         long userId = 1L;
         User user = User.builder().id(userId).build();
         when(userRepo.findById(userId)).thenReturn(Optional.of(user));
@@ -153,7 +153,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeStatus_shouldUpdateActive_whenDifferent() {
+    void changeStatusShouldUpdateActiveWhenDifferent() {
         long userId = 1L;
         User user = User.builder().id(userId).active(false).build();
         User updatedUser = User.builder().id(userId).active(true).build();
@@ -171,7 +171,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void changeStatus_shouldThrow_whenStatusAlreadySet() {
+    void changeStatusShouldThrowWhenStatusAlreadySet() {
         long userId = 1L;
         User user = User.builder().id(userId).active(true).build();
 
@@ -183,7 +183,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findById_returnUser_whenUserExists() {
+    void findByIdReturnUserWhenUserExists() {
         long id = 1L;
 
         User user = User.builder().
@@ -200,7 +200,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findById_ThrowException_whenUserDoesNotExist() {
+    void findByIdThrowExceptionWhenUserDoesNotExist() {
         long id = 1L;
         when(userRepo.findById(id)).thenReturn(Optional.empty());
 
@@ -209,7 +209,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByEmail_returnUser_whenUserExist() {
+    void findByEmailReturnUserWhenUserExist() {
         String email = "test@test.com";
 
         User user = User.builder().
@@ -226,7 +226,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByEmail_ThrowException_whenUserDoesNotExist() {
+    void findByEmailThrowExceptionWhenUserDoesNotExist() {
         String email = "test@test.com";
         when(userRepo.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -235,7 +235,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findAll_shouldReturnEmptyPage_whenAllParametersNull() {
+    void findAllShouldReturnEmptyPageWhenAllParametersNull() {
         Page<User> usersPage = new PageImpl<>(List.of());
         Page<UserResponseDto> dtoPage = new PageImpl<>(List.of());
 
@@ -250,7 +250,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findAll_shouldBuildSpecification_whenSomeParametersProvided() {
+    void findAllShouldBuildSpecificationWhenSomeParametersProvided() {
         String name = "Alice";
         Boolean active = true;
         String email = "alice@test.com";
@@ -284,7 +284,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findAll_shouldBuildSpecification_whenAllParametersProvided() {
+    void findAllShouldBuildSpecificationWhenAllParametersProvided() {
         LocalDate birthDate = LocalDate.of(1990, 1, 1);
         String name = "Test";
         String surname = "Test";
