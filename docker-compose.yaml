@@ -7,10 +7,10 @@ services:
       - db
       - redis
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      DB_URL: jdbc:postgresql://db:5432/user_db
-      DB_USERNAME: postgres
-      DB_PASSWORD: eQ72LCcP2tdQd4oRZYmK
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
 
   db:
     image: postgres:15-alpine
@@ -18,9 +18,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_DB: user_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: eQ72LCcP2tdQd4oRZYmK
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
